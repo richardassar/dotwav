@@ -425,7 +425,7 @@ function samplesToData(samples, sampleDepth) {
 }
 
 //
-function getChannelMinMax(data) {
+function getMinMax(data) {
 	var
 		min = Infinity,
 		max = -Infinity;
@@ -532,10 +532,16 @@ function riffChunk(channels, sampleDepth, sampleRate, samples) {
 }
 
 //
-function normalize(data, min, max, low, high) {
+function normalize(data, sampleDepth, min, max, low, high) {
 	var length = data.length;
 
-	var ret = new Array(length);
+	var ret;
+
+	if(sampleDepth == 8) {
+		ret = new Int8Array(length);
+	} else if(sampleDepth == 16) {
+		ret = new Int16Array(length);
+	}
 
 	var range = max - min;
 
@@ -595,11 +601,11 @@ DotWAV.prototype = {
 		var low, high;
 
 		if(this.options.sampleDepth == 8) {
-			low = -0x7F;
-			high = 0x80;
+			low = -0x80;
+			high = 0x7F;
 		} else if(this.options.sampleDepth == 16) {
-			low = -0x7FFF;
-			high = 0x8000;
+			low = -0x8000;
+			high = 0x7FFF;
 		}
 
 		if(this.options.normalize) {
@@ -607,7 +613,7 @@ DotWAV.prototype = {
 				var min, max;
 
 				if(typeof this.options.normalize == "boolean") {
-					var minmax = getChannelMinMax(channels[i]);
+					var minmax = getMinMax(channels[i]);
 
 					min = minmax.min;
 					max = minmax.max;
@@ -616,7 +622,7 @@ DotWAV.prototype = {
 					max = this.options.normalize.max;
 				}
 
-				channels[i] = normalize(channels[i], min, max, low, high);
+				channels[i] = normalize(channels[i], this.options.sampleDepth, min, max, low, high);
 			}
 		}
 
@@ -3335,7 +3341,7 @@ require.define("/test/test.js",function(require,module,exports,__dirname,__filen
 	domready = require("domready");
 
 var sampleRate = 44100;
-var duration = 10;
+var duration = 2;
 var length = sampleRate * duration;
 
 var dataL = new Array(length);
@@ -3343,7 +3349,7 @@ var dataR = new Array(length);
 
 for(var i = 0; i < length; i++) {
 	dataL[i] = Math.sin(i / sampleRate * Math.PI * 2 * 440);
-	dataR[i] = Math.sin(i / sampleRate * Math.PI * 2 * 880);
+	dataR[i] = Math.sin(i / sampleRate * Math.PI * 2 * 443);
 }
 
 var wav = new DotWAV({
@@ -3377,15 +3383,6 @@ var anchorElement = document.createElement('a');
 anchorElement.innerHTML = "Download...";
 anchorElement.href = src;
 anchorElement.download = "data.wav";
-
-/*anchorElement.onclick = function() {
-	if (window.saveAs) {
-		window.saveAs(blob, "data.wav");
-	}
-	else {
-		navigator.saveBlob(blob, "data.wav");
-	}
-};*/
 
 //
 domready(function() {

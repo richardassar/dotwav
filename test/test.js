@@ -3,7 +3,7 @@ var
 	domready = require("domready");
 
 var sampleRate = 44100;
-var duration = 10;
+var duration = 2;
 var length = sampleRate * duration;
 
 var dataL = new Array(length);
@@ -11,7 +11,7 @@ var dataR = new Array(length);
 
 for(var i = 0; i < length; i++) {
 	dataL[i] = Math.sin(i / sampleRate * Math.PI * 2 * 440);
-	dataR[i] = Math.sin(i / sampleRate * Math.PI * 2 * 880);
+	dataR[i] = Math.sin(i / sampleRate * Math.PI * 2 * 443);
 }
 
 var wav = new DotWAV({
@@ -45,15 +45,6 @@ var anchorElement = document.createElement('a');
 anchorElement.innerHTML = "Download...";
 anchorElement.href = src;
 anchorElement.download = "data.wav";
-
-/*anchorElement.onclick = function() {
-	if (window.saveAs) {
-		window.saveAs(blob, "data.wav");
-	}
-	else {
-		navigator.saveBlob(blob, "data.wav");
-	}
-};*/
 
 //
 domready(function() {

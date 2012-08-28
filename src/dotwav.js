@@ -30,7 +30,7 @@ function samplesToData(samples, sampleDepth) {
 }
 
 //
-function getChannelMinMax(data) {
+function getMinMax(data) {
 	var
 		min = Infinity,
 		max = -Infinity;
@@ -137,10 +137,16 @@ function riffChunk(channels, sampleDepth, sampleRate, samples) {
 }
 
 //
-function normalize(data, min, max, low, high) {
+function normalize(data, sampleDepth, min, max, low, high) {
 	var length = data.length;
 
-	var ret = new Array(length);
+	var ret;
+
+	if(sampleDepth == 8) {
+		ret = new Int8Array(length);
+	} else if(sampleDepth == 16) {
+		ret = new Int16Array(length);
+	}
 
 	var range = max - min;
 
@@ -200,11 +206,11 @@ DotWAV.prototype = {
 		var low, high;
 
 		if(this.options.sampleDepth == 8) {
-			low = -0x7F;
-			high = 0x80;
+			low = -0x80;
+			high = 0x7F;
 		} else if(this.options.sampleDepth == 16) {
-			low = -0x7FFF;
-			high = 0x8000;
+			low = -0x8000;
+			high = 0x7FFF;
 		}
 
 		if(this.options.normalize) {
@@ -212,7 +218,7 @@ DotWAV.prototype = {
 				var min, max;
 
 				if(typeof this.options.normalize == "boolean") {
-					var minmax = getChannelMinMax(channels[i]);
+					var minmax = getMinMax(channels[i]);
 
 					min = minmax.min;
 					max = minmax.max;
@@ -221,7 +227,7 @@ DotWAV.prototype = {
 					max = this.options.normalize.max;
 				}
 
-				channels[i] = normalize(channels[i], min, max, low, high);
+				channels[i] = normalize(channels[i], this.options.sampleDepth, min, max, low, high);
 			}
 		}
 
