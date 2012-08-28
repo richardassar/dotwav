@@ -31,11 +31,9 @@ audioElement.setAttribute("src", wav.getData('url'));
 audioElement.setAttribute("controls", "controls");
 
 //
-window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
-window.saveAs = window.saveAs || window.webkitSaveAs || window.mozSaveAs || window.msSaveAs;
-navigator.saveBlob = navigator.saveBlob || navigator.msSaveBlob || navigator.mozSaveBlob || navigator.webkitSaveBlob;
+/*window.URL = window.URL || window.webkitURL || window.mozURL || window.msURL;
 
-var blob = new Blob([wav.getData('uint8').buffer], {'type' : 'audio/x-wav'});
+var blob = new Blob([wav.getData('uint8').buffer], {'type' : 'audio/wav'});
 
 var src = window.URL.createObjectURL(blob);
 
@@ -44,10 +42,10 @@ var anchorElement = document.createElement('a');
 
 anchorElement.innerHTML = "Download...";
 anchorElement.href = src;
-anchorElement.download = "data.wav";
+anchorElement.download = "data.wav";*/
 
 //
 domready(function() {
 	document.body.appendChild(audioElement);
-	document.body.appendChild(anchorElement);
+	//document.body.appendChild(anchorElement);
 });
