@@ -160,7 +160,7 @@ function normalize(data, sampleDepth, min, max, low, high) {
 }
 
 //
-var DotWAV = function(options) {
+var DotWAV = function(options) { // TODO, make (options, audioData)
 	assert.ok(options instanceof Object, "Options is provided as an object");
 	assert.ok(typeof options.sampleRate == "number", "options.sampleRate provided as a number");
 
